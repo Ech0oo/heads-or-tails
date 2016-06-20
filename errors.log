@@ -1,0 +1,1 @@
+Chek file exists: Error: ENOENT: no such file or directory, stat 'C:\disk d\node tutorial\heads-or-tails\logs\msg.log'

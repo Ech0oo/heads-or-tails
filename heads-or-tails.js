@@ -1,13 +1,15 @@
 'use strict';
 
 var readline = require('readline'),
-    fs       = require('fs'),
-    util     = require('util');
+          fs = require('fs'),
+        util = require('util');
 
-// var loger = require('./logs');
 var loger = [],
     index = 0,
-    rl;
+    rl,
+    logFileName,
+    pathToLogFile = './logs/',
+    fullPathToLogFile;
 
 console.log(
     '============================\n'
@@ -17,29 +19,60 @@ console.log(
     + '----------------------------\n\n'
 );
 
+// get a log file name from a command line
+logFileName = process.argv[2] || 'history';
+
+// full path to log file
+fullPathToLogFile = util.format('%s%s%s', pathToLogFile, logFileName, '.log');
+
+// delete file if exists 
+fs.stat(fullPathToLogFile, function (err, stats){
+  if (err) writeErrorToFile('Сheck of existence of the file: ', err);
+
+  if (stats) {
+    fs.unlink(fullPathToLogFile, function (err) {
+      if (err) writeErrorToFile('Delete a file: ', err);
+    });
+  }
+});
 
 rl = readline.createInterface(process.stdin, process.stdout);
-
 
 askSide();
 
 rl.on('line', function (answer) {
-    index++;
-    var chosen = handleAnswer(answer);
-    console.log('Выбрано: ' +  chosen);
+    var chosenSide,
+        realSide,
+        logDataString;
 
-    var realSide = handleAnswer(generateSide());
+    index++;
+
+    chosenSide = handleAnswer(answer);
+    console.log('Выбрано: ' +  chosenSide);
+
+    realSide = handleAnswer(generateSide());
     console.log('Выпало: ' + realSide);
 
+    if (chosenSide === realSide) {
+      console.log('Вы угадали!\n')
+    } else {
+      console.log('Попробуйте еще раз.\n')
+    }
+
     // add to array of game results
-    loger.push({index, chosen, realSide});
+    loger.push({index, chosenSide, realSide});
 
     // write to file
-    var logDataString = util.format('%s %s %s\r\n', index, chosen, realSide);
-    fs.appendFile('msg.log', logDataString);
+    logDataString = util.format('%s %s %s\r\n', index, chosenSide, realSide);
+
+    fs.appendFile(fullPathToLogFile, logDataString);
 
     askSide();
 });
+
+
+
+
 
 
 // asks question
@@ -58,7 +91,7 @@ function handleAnswer(value) {
       break;
     case '2' : sideName = 'Решко';
       break;
-    case 'end' : console.log(loger); rl.close(); process.exit();
+    case 'end' : quitGame();
       break;
     default : sideName = 'Неизвестное значение';
   }
@@ -66,7 +99,7 @@ function handleAnswer(value) {
   return sideName;
 }
 
-
+// generate coint side
 function generateSide() {
   // Math.floor(min + Math.random() * (max + 1 - min))
   var sideNumber = Math.floor(1 + Math.random()*(2+1-1));
@@ -74,71 +107,18 @@ function generateSide() {
   return sideNumber;
 }
 
+// end the game
+function quitGame() {
+  rl.close();
+  process.exit(console.log(loger));
+}
 
 
+// write errors to the file
+function writeErrorToFile(doing, err) {
+  var lineToWrite;
 
+  lineToWrite = util.format('%s%s\r\n', doing, err);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// var endGame = false;
-
-// while (!endGame) {
-//   rl.question('Орел или решко?', printResult)  
-// }
-
-
-// function printResult(answer) {
-//   if (answer) {
-//     var chosenSideName;
-
-//     chosenSideName = handleAnswer(answer);
-//     console.log('Вы выбрали: ' + chosenSideName);
-
-//     var autoSide = generateSide();
-//     var autoSideName = handleAnswer(autoSide);
-//     console.log('Выпало: ' + autoSideName);
-//   }
-
-//   rl.close();
-// }
-
-
-
-
-
-
-
-// console.log('Орел или решко?');
-
-// get the first arg after argv[] = node
-// var answer = process.argv[2];
-
-// if (answer) {
-//     var chosenSide;
-
-//     chosenSide = getSideName(answer);
-//     console.log('Вы выбрали: ' + chosenSide);
-
-//     var autoSide = generateSide();
-//     var autoSideName = getSideName(autoSide);
-//     console.log('Выпало: ' + autoSideName);
-// }
-
-
-
-
-
-
-
-
+  fs.appendFile('./errors.log', lineToWrite);
+}
