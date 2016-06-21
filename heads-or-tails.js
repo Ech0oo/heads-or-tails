@@ -19,6 +19,8 @@ console.log(
     + '----------------------------\n\n'
 );
 
+
+
 // get a log file name from a command line
 logFileName = process.argv[2] || 'history';
 
@@ -35,6 +37,8 @@ fs.stat(fullPathToLogFile, function (err, stats){
     });
   }
 });
+
+
 
 rl = readline.createInterface(process.stdin, process.stdout);
 

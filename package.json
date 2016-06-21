@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "coint game",
   "main": "heads-or-tails.js",
-  "dependencies": {},
+  "dependencies": {
+    "split": "^1.0.0"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
