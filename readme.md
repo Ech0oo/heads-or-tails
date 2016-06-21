@@ -1,6 +1,9 @@
 Установка:
-    npm install
-устанавливается модуль 'split', используемый при анализе результатов игры.
+    1. установка nodejs https://nodejs.org/en/
+    2. git clone https://github.com/Ech0oo/heads-or-tails.git
+        или файл архива https://github.com/Ech0oo/heads-or-tails/archive/master.zip
+    3. npm install
+        (устанавливается модуль 'split', используемый при анализе результатов игры.)
 
 
 Запуск игры из каталога heads-or-tails:
